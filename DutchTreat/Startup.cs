@@ -2,7 +2,6 @@ using DutchTreat.Data;
 using DutchTreat.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,8 +27,13 @@ namespace DutchTreat
 				cfg.UseSqlServer( _config.GetConnectionString("DutchConnectionString"));
 			} );
 
+			services.AddTransient<DutchSeeder>();
+
 			// Support for real mail service
 			services.AddTransient<IMailService, NullMailService>();
+
+			services.AddScoped<IDutchRepository, DutchRepository>();
+
 			services.AddControllersWithViews();
 		}
 
