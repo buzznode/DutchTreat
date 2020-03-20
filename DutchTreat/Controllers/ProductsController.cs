@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace DutchTreat.Controllers
 {
     [ApiController]
-    [Route( "api/[controller]" )]
+    [Route( "api/[Controller]" )]
     [Produces("application/json")]
     public class ProductsController : ControllerBase
     {

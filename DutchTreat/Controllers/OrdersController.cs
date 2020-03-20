@@ -1,15 +1,12 @@
 ﻿using DutchTreat.Data;
+using DutchTreat.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DutchTreat.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[Controller]")]
     public class OrdersController : Controller
     {
         private readonly ILogger<OrdersController> _logger;
@@ -26,12 +23,12 @@ namespace DutchTreat.Controllers
         {
             try
             {
-                return Ok( _repo.GetAllOrders() );
+                return Ok(_repo.GetAllOrders());
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
-                _logger.LogError( $"Failed to get orders: {ex}" );
-                return BadRequest( "Failed to get orders" );
+                _logger.LogError($"Failed to get orders: {ex}");
+                return BadRequest("Failed to get orders");
             }
         }
 
@@ -40,22 +37,42 @@ namespace DutchTreat.Controllers
         {
             try
             {
-                var order = _repo.GetOrderById( id );
+                var order = _repo.GetOrderById(id);
 
                 if (order != null)
                 {
-                    return Ok( order );
+                    return Ok(order);
                 }
                 else
                 {
                     return NotFound();
                 }
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
-                _logger.LogError( $"Failed to get orders: {ex}" );
-                return BadRequest( "Failed to get orders" );
+                _logger.LogError($"Failed to get orders: {ex}");
+                return BadRequest("Failed to get orders");
             }
+        }
+
+        [HttpPost]
+        public IActionResult Post([FromBody] Order model)
+        {
+            try
+            {
+                _repo.AddEntity(model);
+
+                if (_repo.SaveAll())
+                {
+                    return Created($"/api/orders/{model.Id}", model);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to save new order: {ex}");
+            }
+
+            return BadRequest("Failed to save new order");
         }
     }
 }

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace DutchTreat.Data
 {
@@ -14,10 +13,15 @@ namespace DutchTreat.Data
         private readonly DutchContext _context;
         private readonly ILogger _logger;
 
-        public DutchRepository( DutchContext context, ILogger<DutchRepository> logger )
+        public DutchRepository(DutchContext context, ILogger<DutchRepository> logger)
         {
             _context = context;
             _logger = logger;
+        }
+
+        public void AddEntity(object model)
+        {
+            _context.Add(model);
         }
 
         public IEnumerable<Order> GetAllOrders()
@@ -32,7 +36,7 @@ namespace DutchTreat.Data
         {
             try
             {
-                _logger.LogInformation( "GetAllProducts was called" );
+                _logger.LogInformation("GetAllProducts was called");
 
                 return _context.Products
                     .OrderBy( p => p.Title )
