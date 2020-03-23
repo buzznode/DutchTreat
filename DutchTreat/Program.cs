@@ -10,39 +10,37 @@ namespace DutchTreat
 {
 	public class Program
 	{
-		public static void Main( string[] args )
+		public static void Main(string[] args)
 		{
-			var host = BuildWebHost( args );
+			var host = BuildWebHost(args);
 
-			RunSeeding( host );
-
+			RunSeeding(host);
 			host.Run();
-
-			BuildWebHost( args ).Run();
+			BuildWebHost(args).Run();
 		}
 
-		private static void RunSeeding( IWebHost host )
+		private static void RunSeeding(IWebHost host)
 		{
 			var scopeFactory = host.Services.GetService<IServiceScopeFactory>();
 
-			using ( var scope = scopeFactory.CreateScope() )
+			using (var scope = scopeFactory.CreateScope())
 			{
 				var seeder = scope.ServiceProvider.GetService<DutchSeeder>();
-				seeder.Seed();
+				seeder.SeedAsync().Wait();
 			}
 		}
 
-		public static IWebHost BuildWebHost( string[] args ) =>
-			WebHost.CreateDefaultBuilder( args )
+		public static IWebHost BuildWebHost(string[] args) =>
+			WebHost.CreateDefaultBuilder(args)
 				.ConfigureAppConfiguration(SetupConfiguration)
 				.UseStartup<Startup>()
 				.Build();
 
-		private static void SetupConfiguration( WebHostBuilderContext ctx, IConfigurationBuilder builder )
+		private static void SetupConfiguration(WebHostBuilderContext ctx, IConfigurationBuilder builder)
 		{
 			// Remove the default configuration options
 			builder.Sources.Clear();
-			builder.AddJsonFile( "appSettings.json", false, true )
+			builder.AddJsonFile("appSettings.json", false, true)
 				.AddEnvironmentVariables();
 		}
 	}

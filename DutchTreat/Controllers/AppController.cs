@@ -1,12 +1,8 @@
 ﻿using DutchTreat.Data;
 using DutchTreat.Models;
 using DutchTreat.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DutchTreat.Controllers
 {
@@ -14,7 +10,6 @@ namespace DutchTreat.Controllers
     {
         private readonly IMailService _mailService;
         private readonly IDutchRepository _repo;
-
 
         public AppController(IMailService mailService, IDutchRepository repo)
         {
@@ -41,11 +36,10 @@ namespace DutchTreat.Controllers
             if (ModelState.IsValid)
             {
                 // Send the email
-                _mailService.SendMessage( "buzznode@yahoo.com", model.Subject, $"From: {model.Name} - {model.Email}, Message: {model.Message}" );
+                _mailService.SendMessage("buzznode@yahoo.com", model.Subject, $"From: {model.Name} - {model.Email}, Message: {model.Message}");
                 ViewBag.UserMessage = "Mail Sent";
                 ModelState.Clear();
             }
-
             return View();
         }
 
@@ -55,10 +49,11 @@ namespace DutchTreat.Controllers
             return View();
         }
 
+        [Authorize]
         public IActionResult Shop()
         {
+            ViewBag.Title = "Shop";
             var results = _repo.GetAllProducts();
-
             return View(results);
         }
     }

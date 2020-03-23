@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace DutchTreat.Data
 {
@@ -24,12 +23,38 @@ namespace DutchTreat.Data
             _context.Add(model);
         }
 
-        public IEnumerable<Order> GetAllOrders()
+        public IEnumerable<Order> GetAllOrders(bool includeItems)
         {
-            return _context.Orders
-                .Include(o => o.Items)
-                .ThenInclude(i => i.Product)
-                .ToList();
+            if (includeItems)
+            {
+                return _context.Orders
+                    .Include(o => o.Items)
+                    .ThenInclude(i => i.Product)
+                    .ToList();
+            }
+            else
+            {
+                return _context.Orders
+                    .ToList();
+            }
+        }
+
+        public IEnumerable<Order> GetAllOrdersByUser(string username, bool includeItems)
+        {
+            if (includeItems)
+            {
+                return _context.Orders
+                    .Where(o => o.User.UserName == username)
+                    .Include(o => o.Items)
+                    .ThenInclude(i => i.Product)
+                    .ToList();
+            }
+            else
+            {
+                return _context.Orders
+                    .Where(o => o.User.UserName == username)
+                    .ToList();
+            }
         }
 
         public IEnumerable<Product> GetAllProducts()
@@ -39,40 +64,38 @@ namespace DutchTreat.Data
                 _logger.LogInformation("GetAllProducts was called");
 
                 return _context.Products
-                    .OrderBy( p => p.Title )
+                    .OrderBy(p => p.Title)
                     .ToList();
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
-                _logger.LogError( $"Failed to get all products: {ex}" );
-
+                _logger.LogError($"Failed to get all products: {ex}");
                 return null;
             }
         }
 
-        public Order GetOrderById( int id )
+        public Order GetOrderById(string username, int id)
         {
             return _context.Orders
-                .Include( o => o.Items )
-                .ThenInclude( i => i.Product )
-                .Where( o => o.Id == id )
+                .Include(o => o.Items)
+                .ThenInclude(i => i.Product)
+                .Where(o => o.Id == id && o.User.UserName == username)
                 .FirstOrDefault();
         }
 
-        public IEnumerable<Product> GetProductsByCategory( string category )
+        public IEnumerable<Product> GetProductsByCategory(string category)
         {
             try
             {
-                _logger.LogInformation( "GetProductsByCategory was called" );
+                _logger.LogInformation("GetProductsByCategory was called");
 
                 return _context.Products
-                    .Where( p => p.Category == category )
+                    .Where(p => p.Category == category)
                     .ToList();
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
-                _logger.LogError( $"Failed to get products by category: {ex}" );
-
+                _logger.LogError($"Failed to get products by category: {ex}");
                 return null;
             }
         }
@@ -81,14 +104,12 @@ namespace DutchTreat.Data
         {
             try
             {
-                _logger.LogInformation( "SaveAll was called" );
-
+                _logger.LogInformation("SaveAll was called");
                 return _context.SaveChanges() > 0;
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
-                _logger.LogError( $"Failed save all: {ex}" );
-
+                _logger.LogError($"Failed save all: {ex}");
                 return false;
             }
         }
@@ -97,14 +118,12 @@ namespace DutchTreat.Data
         {
             try
             {
-                _logger.LogInformation( "SaveChanges was called" );
-
+                _logger.LogInformation("SaveChanges was called");
                 return _context.SaveChanges() > 0;
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
-                _logger.LogError( $"Failed to save changed: {ex}" );
-
+                _logger.LogError($"Failed to save changed: {ex}");
                 return false;
             }
         }
