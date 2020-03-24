@@ -35,7 +35,25 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="ClientApp\**" />
+    <Content Remove="ClientApp\**" />
+    <EmbeddedResource Remove="ClientApp\**" />
+    <None Remove="ClientApp\**" />
+    <TypeScriptCompile Remove="ClientApp\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <TypeScriptCompile Remove="wwwroot\ts\main.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="ClientApp\app\app.component.html" />
+    <Content Include="ClientApp\app\shop\productList.component.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\app\shared\dataService.ts" />
+    <TypeScriptCompile Include="ClientApp\app\shop\productList.component.ts" />
   </ItemGroup>
 
 </Project>
